@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>This is the main page !! </title>
+    <title><%=findValue.title%></title>
 </head>
 <body>
     <h3>The Main listings</h3>
-   <% for(let value of data){%>
     <ul>
-    <a href="/listings/<%=value.id%>"><%= (value.title)%></a>
+    <li><%=findValue.title%></li>  
+    <li><%=findValue.price%></li>  
+    <li><%=findValue.location%></li>  
+     <li><%=findValue.description%></li>  
+
    </ul>
-<%}%>
 </body>
 </html>
 
