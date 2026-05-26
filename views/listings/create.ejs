@@ -1,20 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Details correctly</title>
-</head>
+<%- layout("/layouts/boiler.ejs") %>
 <body>
     <h3>Detail Descriptions:</h3>
-    <form method="POST" action="/add">
-        <input name="title" placeholder="Enter the title"> <br>
-        <textarea name="description" placeholder="Enter Description"></textarea>
-        <input type="number" placeholder="Enter Price" name="price"> <br>
-        <input name="location" placeholder="Enter the location"> <br>
-        <input name="country" placeholder="Enter the country"> <br>
-        <button>Submmit it!</button>
-    </form>
-</body>
-</html>
+    <form method="POST" action="/add"  novalidate class="needs-validation" >
+        <div class="offset-2">
+        <div class="group">
+         <label for="title">Title</label>
+        <input name="title" placeholder="Enter the title" class="form-control"
+                required> 
+                <div class="valid-feedback">
+                    Title Look Good
+                </div>
+                <div class="invalid-feedback">
+                    Title Need to add
+                </div>
+        </div> <br>
 
+        <div class="group">
+        <label for="description">Description</label>
+        <textarea name="description" placeholder="Enter Description" class="form-control" required></textarea> <br>
+        <div class="valid-feedback">
+                    Description Look Good
+                </div>
+                <div class="invalid-feedback">
+                Description Need to add
+                </div>
+        </div> <br>
+
+
+
+        <div class="group">
+        <label for="number">Price</label>
+        <input type="number" placeholder="Enter Price" name="price" class="form-control" required> <br>
+        <div class="valid-feedback">
+                    Price is Good
+                </div>
+                <div class="invalid-feedback">
+                    Price should not be Zero or Empty
+                </div>
+        </div> <br>
+
+
+        <div class="group">
+        <label for="location">Location</label>
+        <input name="location" placeholder="Enter the location" class="form-control" required> <br>
+        <div class="valid-feedback">
+                    Location is Looking Good
+                </div>
+                <div class="invalid-feedback">
+                    Locations is invalid 
+                </div>
+        </div> <br>
+
+
+        <div class="group">
+        <label for="country">Country</label>
+        <input name="country" placeholder="Enter the country" class="form-control" required> <br>
+        <div class="valid-feedback">
+                    Country Look Good
+                </div>
+                <div class="invalid-feedback">
+                    Country is invalid 
+                </div>
+        </div> <br>
+
+      
+        <button class=" btn btn-dark">Submmit it!</button>
+    </form>
+
+
+</div>
+<script src="/js/script.js"></script>

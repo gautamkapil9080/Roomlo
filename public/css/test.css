@@ -1,0 +1,76 @@
+body{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+}
+.container{
+    flex:1;
+}
+/* For the nav-bar */
+.navbar{
+    margin-top:1rem;
+    margin-bottom:1rem;
+    height:5rem;
+}
+.navbar-brand{
+    font-size:2rem;
+
+}
+.nav-link{
+    color:black !important;
+}
+.nav-link:hover{
+    color:black  !important;
+    text-decoration:underline;
+}
+
+/* Footer */
+footer{
+    text-align:center;
+    padding:1rem;
+}
+
+.f-info{
+    display:flex !important;
+    gap: 1rem !important;
+    justify-content:center;
+    background-color:aliceblue;
+
+}
+.f-info a{
+    text-decoration:none;
+
+}
+
+.link{
+    color:black;
+}
+.link:hover{
+    color:blue;
+    text-decoration:underline;
+}
+
+/* For card */
+.main-card{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5rem;
+} 
+
+
+/* Working for the button in the showvalue  */
+.show-submmit{
+    display:flex;
+    flex-direction:row;
+    gap:1rem;
+}
+.whole-card{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    align-items:center;
+
+
+}
+
+

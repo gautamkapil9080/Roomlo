@@ -1,19 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%=findValue.title%></title>
-</head>
-<body>
-    <h3>The Main listings</h3>
-    <ul>
-    <li><%=findValue.title%></li>  
-    <li><%=findValue.price%></li>  
-    <li><%=findValue.location%></li>  
-     <li><%=findValue.description%></li>  
+<%- layout("/layouts/boiler.ejs") %>
 
-   </ul>
-</body>
-</html>
+<div class="whole-card">
+<div class="card" style="width: 30rem; height:30rem ">
+  <img class="card-img-top" src="<%=findValue.image%>" alt="Card image cap">
+  <div class="card-body">
+    <p class="card-text"> <%=findValue.title%></p>
+    <p>NPR <nsbp></nsbp><%=findValue.price%></p>
+    <p><%=findValue.location%></p>
+    <p><%=findValue.description%></p>
+  </div>
+</div>
+
+
+<div class="show-submmit">
+    <form method="GET" action="/edit/<%=findValue._id %>">
+        <button class="btn btn-dark">Edit this </button>
+     </form>
+     <form method="POST" action="/delete/<%=findValue._id%>?_method=DELETE">
+    <button class="btn btn-dark" >Delete this!</button>
+</form>
+
+
+</div>
+    
+</div>
 

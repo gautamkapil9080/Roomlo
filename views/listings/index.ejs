@@ -1,20 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>This is the main page !! </title>
-</head>
+<%- layout("/layouts/boiler.ejs") %>
 <body>
     <h3>The Main listings</h3>
-   <% for(let value of data){%>
-    <ul>
-    <a href="/listings/<%=value.id%>"><%= (value.title)%></a>
-   </ul>
-<%}%>
-<form method="GET" action="/new">
-    <button>Add new list : </button>
-</form>
+
+    <div class="main-card">
+   <% for(let value of data) { %>
+    <div class="card" style="width: 18rem;">
+  <img src="<%=value.image%>" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title"><%= value.title%></h5>
+    <p class="card-text"><%=value.description%></p>
+    <p class="card-price">INR <nbsp></nbsp><%=value.price%></p>
+    <p class="card-location"><%=value.location%></p>
+    <a href="/listings/<%=value.id%>" class="btn btn-primary">More to know </a>
+  </div>
+</div>
+   <%} %>
+   </div>
 </body>
-</html>
+
 
