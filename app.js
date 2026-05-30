@@ -6,6 +6,8 @@ const path=require("path");
 const MONGO_URL="mongodb://127.0.0.1:27017/Roomlo";
 const methodOverride=require("method-override");
 const ejsmate=require("ejs-mate");
+const wrapAsync=require("./utils/wrapAsync");
+const ExpressError=require("./utils/ExpressError");
 
 main().
 then(()=>{
@@ -42,8 +44,9 @@ app.get("/new",(req,res)=>{
 });
 
 // creating the end point to catch after submmision of the creation page.
-app.post("/add",async(req,res)=>{
-    let {title,description,price,country,location}=req.body;
+app.post("/add",
+    wrapAsync(async(req,res,next)=>{
+       let {title,description,price,country,location}=req.body;
     const newListing=new Listing({
         title: title,
         description: description,
@@ -53,8 +56,9 @@ app.post("/add",async(req,res)=>{
     })
     await newListing.save();
     res.redirect("/listings");
+    
 
-})
+}));
 
 app.get("/listings/:id",async(req,res)=>{  // ** To show the value 
     let {id}=req.params;
@@ -63,7 +67,7 @@ app.get("/listings/:id",async(req,res)=>{  // ** To show the value
 })
 
 // ** For Update : 
-                // send form for rendring it!!
+                // scend form for rendring it!!
 app.get("/edit/:id",async(req,res)=>{
     let {id}=req.params;
     const  newValue=await Listing.findById(id);
@@ -92,6 +96,17 @@ app.delete("/delete/:id",async(req,res)=>{
 })
 
 
+// If no route found then it will take response at this route ::
+    app.all("*",(req,res,next)=>{
+        next(new ExpressError(404,"Page Not found "));
+    })
+
+// Middleware for catching the error :
+
+app.use((err,req,res,next)=>{
+    let {statuscode,message}=err;
+    res.status(statuscode,message);
+})
 
 app.listen(port,()=>{
     console.log("Server has been started");
