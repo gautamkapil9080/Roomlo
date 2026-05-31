@@ -1,0 +1,28 @@
+<%- layout("/layouts/boiler.ejs") %>
+<body>
+    <h3> Write Review for-<%=value%></h1> <br> <br>
+        <form method="POST" action="/listings/<%=id%>/reviews"  novalidate class="needs-validation" >
+        <div class="offset-2">
+        <div class="group">
+        <label for="comment">Description</label>
+        <textarea name="reviews[comment]" placeholder="Enter Comment" class="form-control" required></textarea> <br>
+        <div class="valid-feedback">
+                    Commment Did not Look Good
+                </div>
+                <div class="invalid-feedback">
+                Comment Need to Add
+                </div>
+        </div> <br> 
+
+<label for="range" class="form-label">Rating Review</label>
+<input type="range" class="form-range" min="1" max="5" value="3" id="range4" name="reviews[rating]">
+<output for="range" id="rangeValue" aria-hidden="true"></output> <br> <br>
+
+        <button class=" btn btn-dark">Submmit it!</button>
+    </form>
+</div>
+</div>
+
+<script src="/js/review.js"></script>
+<script src="/js/script.js"></script>
+ 

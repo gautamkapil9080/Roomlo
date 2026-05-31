@@ -5,7 +5,7 @@
         <div class="offset-2">
         <div class="group">
          <label for="title">Title</label>
-        <input name="title" placeholder="Enter the title" class="form-control"
+        <input name="listing[title]" placeholder="Enter the title" class="form-control"
                 required> 
                 <div class="valid-feedback">
                     Title Look Good
@@ -17,7 +17,7 @@
 
         <div class="group">
         <label for="description">Description</label>
-        <textarea name="description" placeholder="Enter Description" class="form-control" required></textarea> <br>
+        <textarea name="listing[description]" placeholder="Enter Description" class="form-control" required></textarea> <br>
         <div class="valid-feedback">
                     Description Look Good
                 </div>
@@ -30,7 +30,7 @@
 
         <div class="group">
         <label for="number">Price</label>
-        <input type="number" placeholder="Enter Price" name="price" class="form-control" required> <br>
+        <input type="number" placeholder="Price should be greater than 500" name="listing[price]" class="form-control" required> <br>
         <div class="valid-feedback">
                     Price is Good
                 </div>
@@ -42,7 +42,7 @@
 
         <div class="group">
         <label for="location">Location</label>
-        <input name="location" placeholder="Enter the location" class="form-control" required> <br>
+        <input name="listing[location]" placeholder="Enter the location" class="form-control" required> <br>
         <div class="valid-feedback">
                     Location is Looking Good
                 </div>
@@ -54,7 +54,7 @@
 
         <div class="group">
         <label for="country">Country</label>
-        <input name="country" placeholder="Enter the country" class="form-control" required> <br>
+        <input name="listing[Country]" placeholder="Enter the country" class="form-control" required> <br>
         <div class="valid-feedback">
                     Country Look Good
                 </div>

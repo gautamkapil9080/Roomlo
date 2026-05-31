@@ -10,16 +10,28 @@ const ListingSchema=new Schema({
         type:String,
         required:true
     },
+
     image:String,
+
     price:{
       type:Number,
-      required:true},
+      required:true}
+      ,
     location:{
          type:String,
-         required:true},
+         required:true}
+         ,
+
          Country:{
             type:String,
-            required:true}
+            required:true
+         },
+         reviews:[
+            {
+                type:Schema.Types.ObjectId,
+                ref:"reviewModel"
+            }
+         ]
 });
 
 const Listing=mongoose.model("Listing",ListingSchema);

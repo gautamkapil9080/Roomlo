@@ -16,12 +16,18 @@
     <form method="GET" action="/edit/<%=findValue._id %>">
         <button class="btn btn-dark">Edit this </button>
      </form>
+     <form method="GET" action="/review/<%=findValue._id %>">
+        <button class="btn btn-dark">Review Section</button>
+     </form>
      <form method="POST" action="/delete/<%=findValue._id%>?_method=DELETE">
     <button class="btn btn-dark" >Delete this!</button>
 </form>
-
-
-</div>
-    
+<br>
 </div>
 
+<div id="allReview">
+  <h5>All Reviews</h3>
+  <% for(let value of findValue.reviews){ %>
+    <p><%=value.comment%>Rating :<%=value.rating%></p>
+  <%} %>
+</div>
