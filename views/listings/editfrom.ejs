@@ -1,10 +1,10 @@
 <%- layout("/layouts/boiler.ejs") %>
 
-    <h3>Check it and correct the data</h3>
-    <form method="POST" action="/submmiteditdata/<%= newValue._id %>?_method=PUT" class="needs-validation" novalidate>
+    <h3>Check it and correct the data</h3> 
+    <form method="POST" action="/listings/submmiteditdata/<%= newValue._id %>?_method=PUT" class="needs-validation" novalidate>
         <div class="group">
             <label for="title">Title</label>
-             <input name="title" value="<%=newValue.title%>" class="form-control" required>
+             <input name="listing[title]" value="<%=newValue.title%>" class="form-control" required>
                <div class="valid-feedback">
                     Title Look Good
                 </div>
@@ -15,7 +15,7 @@
         
         <div class="group">
             <label for="description">Description</label>
-            <input name="description" value="<%=newValue.description%>" class="form-control" required> 
+            <input name="listing[description]" value="<%=newValue.description%>" class="form-control" required> 
               <div class="valid-feedback">
                         Good Feedback
                 </div>
@@ -27,7 +27,7 @@
 
     <div class="group">
             <label for="number">Price</label>
-           <input type="number" value="<%=newValue.price%>" name="price" class="form-control" required>
+           <input type="number" value="<%=newValue.price%>" name="listing[price]" class="form-control" required>
                   <div class="valid-feedback">
                     Number Good 
                 </div>
@@ -39,7 +39,7 @@
 
     <div class="group">
         <label for="Location">Locations</label>
-         <input name="location" value="<%=newValue.location%>" class="form-control" required>
+         <input name="listing[location]" value="<%=newValue.location%>" class="form-control" required>
            <div class="valid-feedback">
                     Location Look Good
                 </div>
@@ -51,7 +51,7 @@
 
     <div class="group">
         <label for="country">Country</label>
-        <input name="country" value="<%=newValue.country%>" class="form-control" required>
+        <input name="listing[country]" value="<%=newValue.country%>" class="form-control" required>
           <div class="valid-feedback">
                     Country  Look Good
                 </div>

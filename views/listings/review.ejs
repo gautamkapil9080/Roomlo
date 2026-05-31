@@ -1,7 +1,7 @@
 <%- layout("/layouts/boiler.ejs") %>
 <body>
     <h3> Write Review for-<%=value%></h1> <br> <br>
-        <form method="POST" action="/listings/<%=id%>/reviews"  novalidate class="needs-validation" >
+        <form method="POST" action="/review/listings/<%=id%>/reviews"  novalidate class="needs-validation" >
         <div class="offset-2">
         <div class="group">
         <label for="comment">Description</label>
