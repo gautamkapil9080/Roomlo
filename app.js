@@ -62,8 +62,10 @@ app.use(express.static(path.join(__dirname,"/public")));
 
 
     // We are sending the sucess messgage to every route who need they will use :
-    app.use((req,res,next)=>{          
+    app.use((req,res,next)=>{    
+        res.locals.error=req.flash("error");      
         res.locals.success=req.flash("success");
+        res.locals.err=req.flash("err");
         next();
     })
 // For Listing router :
@@ -73,7 +75,6 @@ app.use("/listings",listings);
 app.use("/review",Review);
 
 // For User Router ;
-
 app.use("/user",User);
 
 

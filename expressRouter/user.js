@@ -30,10 +30,12 @@ router.get("/login",(req,res)=>{
 
 router.post("/login",
     passport.authenticate("local",{
-        failureRedirect:"/login",
-        failureFlash:true
+        failureRedirect:"/user/login",
+        failureFlash:"Login Credentials Does not match"
     }),
     async(req,res)=>{
-        res.send("verify it !");
+        req.flash("success","Welcome Back!");
+        res.redirect("/listings");
 });
+
 module.exports=router;

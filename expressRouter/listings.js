@@ -16,6 +16,10 @@ router.get("/",async(req,res)=>{
 
 // *  Create and add new route  *:
 router.get("/new",(req,res)=>{
+    if(!req.isAuthenticated()){
+        req.flash("err","Need To login To Make Any Changes");
+       return  res.redirect("/user/login");
+    }
     res.render("listings/create");
 });
 // creating the end point to catch after submmision of the creation page.
