@@ -1,0 +1,56 @@
+<%-layout("/layouts/boiler") %>
+</head>
+    <body>
+    <h3>Sign Up</h3>
+    <form method="POST" action="/user/signup"  novalidate class="needs-validation" >
+        <div class=" offset-4">
+        <div class="group">
+         <label for="username">Username</label>
+        <input name="username" placeholder="Enter Username" class="form-control"
+                required> 
+                <div class="valid-feedback">
+                    Username Good 
+                </div>
+                <div class="invalid-feedback">
+                    Username Need to add
+                </div>
+        </div> <br>
+
+        <div class="group">
+        <label for="password">Password</label>
+        <input type="password" name="password" class="form-control" required placeholder="Random@8899">
+        <div class="valid-feedback">
+                     Look Good
+                </div>
+                <div class="invalid-feedback">
+                    Need to add! 
+                </div>
+        </div> <br>
+
+
+
+        <div class="group">
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="random123@gmail.com" required class="form-control">
+        <div class="valid-feedback">
+                    Email is Good 
+                </div>
+                <div class="invalid-feedback">
+                    Email is Not Good! 
+                </div>
+        </div> <br>
+
+
+        
+
+
+       
+      
+        <button class=" btn btn-dark">Sign-Up</button>
+    </form>
+
+
+</div>
+<script src="/js/script.js"></script>
+</body>
+</html>

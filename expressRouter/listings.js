@@ -28,6 +28,7 @@ router.post("/add",
       }
     const newListing=new Listing(req.body.listing);
     await newListing.save();
+    req.flash("success","Added New List");
     res.redirect("/listings");
 
 }));
