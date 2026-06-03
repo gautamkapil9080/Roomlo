@@ -4,7 +4,7 @@ const User=require("../model/user");
 const WrapAsync=require("../utils/wrapAsync");
 const passport=require("passport");
 
-
+// For Signup 
 
 router.get("/signup",(req,res)=>{
     res.render("users/Signup.ejs")
@@ -27,7 +27,7 @@ router.post("/signup",WrapAsync(async(req,res)=>{
 router.get("/login",(req,res)=>{
     res.render("users/login");
 })
-
+// For Login 
 router.post("/login",
     passport.authenticate("local",{
         failureRedirect:"/user/login",
@@ -37,5 +37,18 @@ router.post("/login",
         req.flash("success","Welcome Back!");
         res.redirect("/listings");
 });
+
+// For Logout : 
+
+router.get("/logout",(req,res)=>{
+    req.logout((err)=>{
+        if(err){
+            return next(err);
+        }
+        req.flash("success","You are Loged out");
+        res.redirect("/listings");
+    }); // This is the method to logout the users:
+
+})
 
 module.exports=router;

@@ -66,6 +66,7 @@ app.use(express.static(path.join(__dirname,"/public")));
         res.locals.error=req.flash("error");      
         res.locals.success=req.flash("success");
         res.locals.err=req.flash("err");
+        res.locals.reqUser=req.user;
         next();
     })
 // For Listing router :
