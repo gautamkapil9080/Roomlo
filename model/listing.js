@@ -31,7 +31,12 @@ const ListingSchema=new Schema({
                 type:Schema.Types.ObjectId,
                 ref:"reviewModel"
             }
-         ]
+         ],
+         owner:{
+            type:Schema.Types.ObjectId,
+            ref:"User"
+         }
+         
 });
 
 const Listing=mongoose.model("Listing",ListingSchema);

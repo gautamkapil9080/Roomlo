@@ -6,7 +6,8 @@ const wrapAsync=require("../utils/wrapAsync");
 const ExpressError=require("../utils/ExpressError");
 const {ListingSchema,reviewSchema}=require("../schemavalidation");
 const Listing=require("../model/listing");
-
+const {isLogin}=require("../middleware/isAuthenticate");
+const {savedRedirectUrl}=require("../middleware/isAuthenticate");
 
 router.get("/",async(req,res)=>{
     let data = await Listing.find({});
@@ -15,37 +16,36 @@ router.get("/",async(req,res)=>{
 
 
 // *  Create and add new route  *:
-router.get("/new",(req,res)=>{
-    if(!req.isAuthenticated()){
-        req.flash("err","Need To login To Make Any Changes");
-       return  res.redirect("/user/login");
-    }
-    res.render("listings/create");
+router.get("/new",
+isLogin,
+(req,res)=>{
+res.render("listings/create");
 });
 // creating the end point to catch after submmision of the creation page.
 router.post("/add",
-    wrapAsync
-    (async(req,res,next)=>{
-      let result= ListingSchema.validate(req.body);
-      if(result.error){
-        throw new ExpressError(404,result.error);
-      }
-    const newListing=new Listing(req.body.listing);
-    await newListing.save();
-    req.flash("success","Added New List");
-    res.redirect("/listings");
-
+    wrapAsync(async(req,res,next)=>{
+        let result=ListingSchema.validate(req.body);
+        if(result.error){
+            throw new ExpressError(404,result.error);
+        }
+        const newListing=new Listing(req.body.listing);
+        newListing.owner=req.user._id;
+        await newListing.save();
+        console.log(newListing);
+        req.flash("success","Added New List");
+        res.redirect("/listings");
 }));
 
 router.get("/:id",async(req,res)=>{  // ** To show the value 
     let {id}=req.params;
-        const findValue=await Listing.findById(id).populate("reviews");
+        const findValue=await Listing.findById(id).populate("reviews").populate("owner");
         res.render("listings/showvalue",{findValue});
 })
 
 // ** For Update : 
                 // scend form for rendring it!!
 router.get("/edit/:id",
+    isLogin,
     wrapAsync(async(req,res)=>{
     let {id}=req.params;
     const  newValue=await Listing.findById(id);
@@ -72,7 +72,9 @@ router.put("/submmiteditdata/:id",
 
 }));
 
-router.delete("/delete/:id",async(req,res)=>{
+router.delete("/delete/:id",
+    isLogin,
+    async(req,res)=>{
     let {id}=req.params;
     await Listing.findByIdAndDelete(id);
     res.redirect("/listings");

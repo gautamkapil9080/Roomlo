@@ -80,6 +80,7 @@ const sampleListing=[
     price: 90,
     location: "Delhi",
     Country: "India",
+    
   },
 ];
 
