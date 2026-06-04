@@ -1,38 +1,69 @@
 <%- layout("/layouts/boiler.ejs") %>
 
 <div class="whole-card">
-<div class="card" style="width: 30rem; height:35rem ">
-  <img class="card-img-top" src="<%=findValue.image%>" alt="Card image cap">
+<div class="card" style="width: 30rem; height:35rem">
+  <img class="card-img-top" src="<%= findValue.image %>" alt="Card image cap">
   <div class="card-body">
-    <p class="card-text"> <%=findValue.title%></p>
-    <p>NPR <nsbp></nsbp><%=findValue.price%></p>
-    <p><%=findValue.location%></p>
-    <p><%=findValue.description%></p>
-   <% if(!findValue.owner){ %>
-   <p>Owned By:(Roomlo)</p>
-<% } else { %>
-   <p>Owned By: <%= (findValue.owner.username) %></p>
-<% } %>
+    <p class="card-text"><%= findValue.title %></p>
+    <p>NPR <%= findValue.price %></p>
+    <p><%= findValue.location %></p>
+
+    <p><%= findValue.description %></p>
+
+    
+    <% if(!findValue.owner){ %>
+
+        <p>Owned By: Roomlo</p>
+
+    <% } else { %>
+
+        <p>Owned By: <%= findValue.owner.username %></p>
+
+    <% } %>
+
   </div>
+
 </div>
 
+
+<!-- SHOW EDIT/DELETE ONLY TO OWNER -->
+
+<% if(currUser && findValue.owner && findValue.owner._id.equals(currUser._id)){ %>
 
 <div class="show-submmit">
-    <form method="GET" action="/listings/edit/<%=findValue._id %>"> 
-        <button class="btn btn-dark">Edit this </button>
-     </form>
-     <form method="GET" action="/review/<%=findValue._id %>">
+
+    <form method="GET" action="/listings/edit/<%= findValue._id %>"> 
+        <button class="btn btn-dark">Edit this</button>
+    </form>
+
+    <form method="GET" action="/review/<%= findValue._id %>">
         <button class="btn btn-dark">Review Section</button>
-     </form>
-     <form method="POST" action="/listings/delete/<%=findValue._id%>?_method=DELETE">
-    <button class="btn btn-dark" >Delete this!</button>
-</form>
-<br>
+    </form>
+
+    <form method="POST" action="/listings/delete/<%= findValue._id %>?_method=DELETE">
+        <button class="btn btn-dark">Delete this!</button>
+    </form>
+
+    <br>
+
 </div>
 
+<% } %>
+
+
 <div id="allReview">
-  <h5>All Reviews</h3>
+
+  <h5>All Reviews</h5>
+
   <% for(let value of findValue.reviews){ %>
-    <p><%=value.comment%>Rating :<%=value.rating%></p>
-  <%} %>
+
+      <p>
+        <%= value.comment %>
+        Rating : <%= value.rating %>
+      </p>
+
+  <% } %>
+
+</div>
+
 </div>

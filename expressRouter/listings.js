@@ -8,6 +8,8 @@ const {ListingSchema,reviewSchema}=require("../schemavalidation");
 const Listing=require("../model/listing");
 const {isLogin}=require("../middleware/isAuthenticate");
 const {savedRedirectUrl}=require("../middleware/isAuthenticate");
+const {ForEqual}=require("../middleware/ForAuthorization");
+const {currentUser}=require("../middleware/ForAuthorization");
 
 router.get("/",async(req,res)=>{
     let data = await Listing.find({});
@@ -45,7 +47,7 @@ router.get("/:id",async(req,res)=>{  // ** To show the value
 // ** For Update : 
                 // scend form for rendring it!!
 router.get("/edit/:id",
-    isLogin,
+    isLogin,ForEqual,
     wrapAsync(async(req,res)=>{
     let {id}=req.params;
     const  newValue=await Listing.findById(id);
@@ -74,6 +76,7 @@ router.put("/submmiteditdata/:id",
 
 router.delete("/delete/:id",
     isLogin,
+    ForEqual,
     async(req,res)=>{
     let {id}=req.params;
     await Listing.findByIdAndDelete(id);

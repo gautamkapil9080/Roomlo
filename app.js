@@ -16,6 +16,7 @@ const flash=require('connect-flash');
 const passport=require("passport"); // For passport
 const passportLocal=require("passport-local");
 const Users=require("./model/user");
+const {currentUser}=require("./middleware/ForAuthorization");
 let port=8080;
 
 // Database Connection :
@@ -37,6 +38,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate);
 app.set("view engine","ejs"); // Reminder that express need to use  ejs as template engine
 app.use(express.static(path.join(__dirname,"/public")));
+
 
 // Sessions Route : 
     const sessionOptions={
@@ -69,6 +71,9 @@ app.use(express.static(path.join(__dirname,"/public")));
         res.locals.reqUser=req.user;
         next();
     })
+
+app.use(currentUser);
+
 // For Listing router :
 app.use("/listings",listings);
 
