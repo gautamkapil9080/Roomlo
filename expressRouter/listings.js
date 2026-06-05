@@ -10,77 +10,34 @@ const {isLogin}=require("../middleware/isAuthenticate");
 const {savedRedirectUrl}=require("../middleware/isAuthenticate");
 const {ForEqual}=require("../middleware/ForAuthorization");
 const {currentUser}=require("../middleware/ForAuthorization");
+const ListingController=require("../controllers/listings");
 
-router.get("/",async(req,res)=>{
-    let data = await Listing.find({});
-    res.render("listings/index",{data});
-})
+router.get("/",(ListingController.index)); // Passing the index call back
 
 
 // *  Create and add new route  *:
 router.get("/new",
-isLogin,
-(req,res)=>{
-res.render("listings/create");
-});
+isLogin,ListingController.createSend);
+
 // creating the end point to catch after submmision of the creation page.
 router.post("/add",
-    wrapAsync(async(req,res,next)=>{
-        let result=ListingSchema.validate(req.body);
-        if(result.error){
-            throw new ExpressError(404,result.error);
-        }
-        const newListing=new Listing(req.body.listing);
-        newListing.owner=req.user._id;
-        await newListing.save();
-        console.log(newListing);
-        req.flash("success","Added New List");
-        res.redirect("/listings");
-}));
+    wrapAsync((ListingController.createRecive)));
 
-router.get("/:id",async(req,res)=>{  // ** To show the value 
-    let {id}=req.params;
-        const findValue=await Listing.findById(id).populate("reviews").populate("owner");
-        res.render("listings/showvalue",{findValue});
-})
+router.get("/:id",ListingController.Showvalue); // To show value :
 
 // ** For Update : 
                 // scend form for rendring it!!
 router.get("/edit/:id",
     isLogin,ForEqual,
-    wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    const  newValue=await Listing.findById(id);
-    res.render("listings/editfrom",{newValue});
-}))
+    wrapAsync(ListingController.Sendupdate));
 
 // Update route 
 router.put("/submmiteditdata/:id",
-    wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    let {title,description,price,location,country}=req.body;
-    if(!req.body.listing){
-        throw new ExpressError(404,"Send Valid Data");
-        }
-    await Listing.findByIdAndUpdate(id,{
-        title:title,
-        description:description,
-        price:price,
-        location:location,
-        country:country
-    });
-    
-    res.redirect("/listings");
-
-}));
+    wrapAsync((ListingController.ReciveUpdate)));
 
 router.delete("/delete/:id",
     isLogin,
     ForEqual,
-    async(req,res)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-});
+    ListingController.Delete);
 
 module.exports =router;
