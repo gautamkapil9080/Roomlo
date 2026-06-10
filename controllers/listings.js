@@ -1,4 +1,6 @@
 const Listing=require("../model/listing");
+const {ListingSchema}=require("../schemavalidation");
+const ExpressError=require("../utils/ExpressError");
 
 module.exports.index=async(req,res)=>{
     let data = await Listing.find({});
@@ -8,17 +10,28 @@ module.exports.createSend=(req,res)=>{
 res.render("listings/create");
 };
 
+// module.exports.createRecive=(async(req,res,next)=>{
+//         let result=ListingSchema.validate(req.body);
+//         if(result.error){
+//             throw new ExpressError(404,result.error);
+//         }
+//         const newListing=new Listing(req.body.listing);
+//         newListing.owner=req.user._id;
+//         await newListing.save();
+//         console.log(newListing);
+//         req.flash("success","Added New List");
+//         res.redirect("/listings");
+// });
+// controller
 module.exports.createRecive=(async(req,res,next)=>{
-        let result=ListingSchema.validate(req.body);
-        if(result.error){
-            throw new ExpressError(404,result.error);
-        }
-        const newListing=new Listing(req.body.listing);
-        newListing.owner=req.user._id;
-        await newListing.save();
-        console.log(newListing);
-        req.flash("success","Added New List");
-        res.redirect("/listings");
+    let url=req.file.path;
+    let filename=req.file.filename;
+    const newListing=new Listing(req.body.listing);
+    newListing.owner=req.user._id;
+    newListing.image={url,filename};
+    await newListing.save();
+    req.flash("success","Added New List");
+    res.redirect("/listings");
 });
 
 module.exports.Showvalue=async(req,res)=>{  // ** To show the value 

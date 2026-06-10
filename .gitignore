@@ -1,2 +1,4 @@
 node_modules/
 class_room/
+.env
+uploads/

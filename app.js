@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 const express=require("express");
 const app=express();
 const mongoose=require('mongoose');
@@ -17,6 +19,8 @@ const passport=require("passport"); // For passport
 const passportLocal=require("passport-local");
 const Users=require("./model/user");
 const {currentUser}=require("./middleware/ForAuthorization");
+
+
 let port=8080;
 
 // Database Connection :
@@ -38,6 +42,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate);
 app.set("view engine","ejs"); // Reminder that express need to use  ejs as template engine
 app.use(express.static(path.join(__dirname,"/public")));
+
 
 
 // Sessions Route : 
@@ -92,10 +97,20 @@ app.use("/user",User);
 
 // Middleware for catching the error :
 
+// app.use((err,req,res,next)=>{
+//     let {statuscode=500,message}=err;
+//     // res.status(statuscode).send(message);
+//      res.render("listings/error",{message});
+// })
 app.use((err,req,res,next)=>{
+
+    console.log("FULL ERROR:");
+    console.log(err);
+
     let {statuscode=500,message}=err;
-    // res.status(statuscode).send(message);
-     res.render("listings/error",{message});
+
+    res.render("listings/error",{message});
+
 })
 
 app.listen(port,()=>{

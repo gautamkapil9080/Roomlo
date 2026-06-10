@@ -11,6 +11,9 @@ const {savedRedirectUrl}=require("../middleware/isAuthenticate");
 const {ForEqual}=require("../middleware/ForAuthorization");
 const {currentUser}=require("../middleware/ForAuthorization");
 const ListingController=require("../controllers/listings");
+const multer  = require('multer')
+const{storage}=require("../cloudConfig");
+const upload = multer({storage}) // Files will be store by multer in cloudinary
 
 router.get("/",(ListingController.index)); // Passing the index call back
 
@@ -20,8 +23,9 @@ router.get("/new",
 isLogin,ListingController.createSend);
 
 // creating the end point to catch after submmision of the creation page.
-router.post("/add",
-    wrapAsync((ListingController.createRecive)));
+router.post("/add",upload.single("listing[image]"),
+    wrapAsync((ListingController.createRecive))
+);
 
 router.get("/:id",ListingController.Showvalue); // To show value :
 
