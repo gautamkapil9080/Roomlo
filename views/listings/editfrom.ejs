@@ -24,10 +24,11 @@
                 </div>
                 <br>
         </div>
-
+    
     <div class="group">
             <label for="number">Price</label>
-           <input type="number" value="<%=newValue.price%>" name="listing[price]" class="form-control" required>
+           <input type="number" value="<%=newValue.price%>" name="listing[price]" class="form-control" required
+           enctype="multipart/form-data">
                   <div class="valid-feedback">
                     Number Good 
                 </div>
@@ -51,7 +52,7 @@
 
     <div class="group">
         <label for="country">Country</label>
-        <input name="listing[country]" value="<%=newValue.country%>" class="form-control" required>
+        <input name="listing[Country]" value="<%=newValue.country%>" class="form-control" required>
           <div class="valid-feedback">
                     Country  Look Good
                 </div>

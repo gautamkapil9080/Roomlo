@@ -5,7 +5,8 @@ const app=express();
 const mongoose=require('mongoose');
 const Listing=require("./model/listing");
 const path=require("path");
-const MONGO_URL="mongodb://127.0.0.1:27017/Roomlo";
+// const MONGO_URL="mongodb://127.0.0.1:27017/Roomlo";
+const dbUrl=process.env.ATLASDB_URL;
 const methodOverride=require("method-override");
 const ejsmate=require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync");
@@ -14,6 +15,8 @@ const listings=require("./expressRouter/listings");
 const Review=require("./expressRouter/review");
 const User=require("./expressRouter/user");
 const session=require("express-session");
+// const MongoStore = require("connect-mongo");
+const MongoStore = require("connect-mongo");
 const flash=require('connect-flash');
 const passport=require("passport"); // For passport
 const passportLocal=require("passport-local");
@@ -32,7 +35,7 @@ then(()=>{
     console.log("Not connected db");
 })
 async function main(){
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(dbUrl);
 }
 
 // Setting Path And Requiring Statics File
@@ -43,19 +46,33 @@ app.engine('ejs', ejsmate);
 app.set("view engine","ejs"); // Reminder that express need to use  ejs as template engine
 app.use(express.static(path.join(__dirname,"/public")));
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    collectionName:"sessions",
+    // crypto:{
+    //     secret:"mysupersecretcode",
+    // },
+    touchAfter:24*3600,
+});
+store.on("error",()=>{
+    console.log("Error in Mongo Sessions");
+});
 
 
 // Sessions Route : 
     const sessionOptions={
+        store,
         secret:"mysupersecretcode",
         resave:false,
-        saveUninitialized:true,
+        saveUninitialized:false,
         cookie:{
             expires:Date.now() + 7*24*60*60*1000,
             maxAge:7*24*60*60*1000,
             httpOnly:true,
         }
     }
+
+
     app.use(session(sessionOptions));
     app.use(flash());
 

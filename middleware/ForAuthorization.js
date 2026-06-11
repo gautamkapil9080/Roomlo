@@ -1,3 +1,4 @@
+const Listing = require("../model/listing");
 module.exports.ForEqual= async(req,res,next)=>{
     let{id}=req.params;
     let listing=await Listing.findById(id);

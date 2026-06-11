@@ -72,5 +72,14 @@ footer{
 
 
 }
+.d-flex{
+    margin:auto;
+}
+.btn-search{
+    padding:10px;
+    border-radius:25px;
+    background-color:red;
+    color:white;
+}
 
 

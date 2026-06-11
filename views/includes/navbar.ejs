@@ -7,18 +7,23 @@
     
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active"  href="#">Home</a>
-        <a class="nav-link" href="/listings">All listing</a>
-        <a class="nav-link" href="/listings/new">Add New listings</a>
+        <a class="nav-link" href="/listings">Explore More</a>
+
       </div>
 
+       <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search  Destinations" aria-label="Search">
+        <button class="btn-search" type="submit">Search</button>
+      </form>
+
       <div class="navbar-nav ms-auto">
+           <a class="nav-link" href="/listings/new">Add Your Stay</a>
          <% if(!reqUser) { %>
-        <a class="nav-link active"  href="/user/login">Login</a>
-        <a class="nav-link" href="/user/signup">Sign-Up</a>
+        <a class="nav-link active"  href="/user/login"><b>Login</b></a>
+        <a class="nav-link" href="/user/signup"><b>Sign-Up</b></a>
         <% }%>
        <% if(reqUser) {%>
-          <a class="nav-link" href="/user/logout">Log-Out</a>
+          <a class="nav-link" href="/user/logout"><b>Log-Out</b></a>
         <%} %>
       </div>
     </div>
