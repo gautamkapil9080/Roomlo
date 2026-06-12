@@ -89,27 +89,32 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .container{
     flex: 1;
+    margin-top: 1rem;
 }
 
 /* Navbar */
 
 .navbar{
     height: 5rem;
-    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f1f1f1;
 }
 
 .navbar-brand{
     font-size: 2rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .nav-link{
     color: black !important;
     margin-left: 1rem;
+    font-size: 1rem;
 }
 
 .nav-link:hover{
@@ -119,21 +124,24 @@
 /* Footer */
 
 footer{
-    margin-top: 2rem;
+    margin-top: 3rem;
 }
 
 .f-info{
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    align-items: center;
+    gap: 1.5rem;
     padding: 1rem;
     background-color: aliceblue;
     flex-wrap: wrap;
+    border-top: 1px solid #e5e5e5;
 }
 
 .f-info a{
     text-decoration: none;
     color: black;
+    font-size: 0.95rem;
 }
 
 .f-info a:hover{
@@ -150,20 +158,83 @@ footer{
     margin-top: 2rem;
 }
 
-/* Show Buttons */
-
-.show-submmit{
-    display: flex;
-    gap: 1rem;
+.card{
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.2s ease;
 }
 
-/* Whole Card */
+.card:hover{
+    transform: translateY(-3px);
+}
+
+.card-img-top{
+    height: 220px;
+    object-fit: cover;
+}
+
+.card-body{
+    padding: 1rem;
+}
+
+.card-title{
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-text{
+    color: #555;
+    font-size: 0.95rem;
+}
+
+/* Show Page */
 
 .whole-card{
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+}
+
+.show-card{
+    width: 100%;
+    max-width: 700px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.show-card img{
+    border-radius: 10px;
+}
+
+/* Buttons */
+
+.show-submmit{
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn{
+    border-radius: 8px !important;
+}
+
+/* Forms */
+
+form{
+    max-width: 700px;
+    margin: auto;
+}
+
+.form-control{
+    border-radius: 8px !important;
+    padding: 0.7rem;
+}
+
+.form-label{
+    font-weight: 500;
 }
 
 /* Search */
@@ -176,6 +247,22 @@ footer{
     background-color: red;
     color: white;
     border-radius: 25px;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.2rem;
     border: none;
+}
+
+.btn-search:hover{
+    opacity: 0.9;
+}
+
+/* Login & Signup */
+
+.login-card,
+.signup-card{
+    max-width: 500px;
+    margin: 3rem auto;
+    padding: 2rem;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background-color: white;
 }
