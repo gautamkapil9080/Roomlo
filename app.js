@@ -129,6 +129,9 @@ app.use((err,req,res,next)=>{
     res.render("listings/error",{message});
 
 })
+app.get("/",(req,res)=>{
+    res.redirect("/listings");
+})
 
 app.listen(port,()=>{
     console.log("Server has been started");
