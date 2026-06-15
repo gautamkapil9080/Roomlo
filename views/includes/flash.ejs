@@ -1,19 +1,28 @@
- <% if(success && success.length>0){ %>
+
+
+
+<% if(locals.success && locals.success.length > 0){ %>
+
 <div class="alert alert-success" role="alert">
-    <%=success%>
+    <%= locals.success %>
 </div>
-<%}%>
 
-<% if(err.length>0){ %>
+<% } %>
+
+
+<% if(locals.error && locals.error.length > 0){ %>
+
 <div class="alert alert-danger" role="alert">
-    <%=err%>
+    <%= locals.error %>
 </div>
-<%}%>
+
+<% } %>
 
 
-<% if(error.length>0){ %>
+<% if(locals.err && locals.err.length > 0){ %>
+
 <div class="alert alert-danger" role="alert">
-    <%=error%>
+    <%= locals.err %>
 </div>
-<%}%>
 
+<% } %>

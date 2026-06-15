@@ -1,0 +1,23 @@
+ <%- layout("/layouts/boiler.ejs") %> 
+
+<%if (search.length==0) {%>
+
+<h2>Result Is Not Found</h2>
+<%} %>
+
+
+    <% for(value of search){%>
+        <div class="card" style="width: 18rem;">
+  <img src="<%=value.image.url%>" class="card-img-top" alt="Image is Loading">
+  <div class="card-body">
+    <h5 class="card-title"><%= value.title%></h5>
+    <p class="card-text"><%=value.description%></p>
+    <p class="card-price">INR <nbsp></nbsp><%=value.price%> <i class="tax-info">+ 3% GST</i></p>
+    <p class="card-location"><%=value.location%> </p>
+    <a href="/listings/<%=value._id%>"  class="btn btn-primary">More to know </a>
+  </div>
+  </div>
+   <%}%>
+
+
+

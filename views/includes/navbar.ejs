@@ -11,21 +11,28 @@
 
       </div>
 
-       <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search  Destinations" aria-label="Search">
+       <form class="d-flex" action="/search" method="GET">
+        <input class="form-control me-2" type="search" placeholder="Search  Destinations" aria-label="Search" name="searchValue">
         <button class="btn-search" type="submit">Search</button>
       </form>
 
-      <div class="navbar-nav ms-auto">
-           <a class="nav-link" href="/listings/new">Add Your Stay</a>
-         <% if(!reqUser) { %>
-        <a class="nav-link active"  href="/user/login"><b>Login</b></a>
-        <a class="nav-link" href="/user/signup"><b>Sign-Up</b></a>
-        <% }%>
-       <% if(reqUser) {%>
-          <a class="nav-link" href="/user/logout"><b>Log-Out</b></a>
-        <%} %>
-      </div>
+     <div class="navbar-nav ms-auto">
+
+    <a class="nav-link" href="/listings/new">Add Your Stay</a>
+
+    <% if(!locals.reqUser) { %>
+        <a class="nav-link active" href="/user/login">
+            <b>Login</b>
+        </a>
+        <a class="nav-link" href="/user/signup">
+            <b>Sign-Up</b>
+        </a>
+    <% } else { %>
+        <a class="nav-link" href="/user/logout">
+            <b>Log-Out</b>
+        </a>
+    <% } %>
+</div>   
     </div>
   </div>
 </nav>

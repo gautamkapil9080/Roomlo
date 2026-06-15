@@ -90,6 +90,7 @@ store.on("error",()=>{
         res.locals.error=req.flash("error");      
         res.locals.success=req.flash("success");
         res.locals.err=req.flash("err");
+        // res.locals.reqUser = req.user || null;
         res.locals.reqUser=req.user;
         next();
     })
@@ -104,6 +105,24 @@ app.use("/review",Review);
 
 // For User Router ;
 app.use("/user",User);
+
+// For Search Route:
+app.get("/search",async(req,res)=>{
+ let {searchValue}=req.query;
+     if(!searchValue || searchValue.trim() === ""){
+        req.flash("err","Please enter something to search");
+        return res.redirect("/listings");
+    }
+
+    let search=await Listing.find({
+        location:{
+            $regex:searchValue,  // Find Similar Matching Text :
+            $options: "i"      // Case Sensative:
+
+        }
+    });
+    res.render("listings/search",{search});
+})
 
 
 
