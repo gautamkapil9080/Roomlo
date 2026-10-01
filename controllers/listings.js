@@ -5,7 +5,6 @@ const ExpressError=require("../utils/ExpressError");
 module.exports.index=async(req,res)=>{
     let data = await Listing.find({});
     res.render("listings/index",{data})};
-
 module.exports.createSend=(req,res)=>{
 res.render("listings/create");
 };
@@ -24,8 +23,15 @@ res.render("listings/create");
 // });
 // controller
 module.exports.createRecive=(async(req,res,next)=>{
-    let url=req.file.path;
-    let filename=req.file.filename;
+    let url=req.file?.path;
+    if(!url){
+        throw new ExpressError(400,"Image Failed");
+    }
+    let filename=req.file?.filename;
+    const { error } = ListingSchema.validate(req.body);
+    if (error) {
+  throw new ExpressError(400, error.details.map(detail => detail.message).join(", "));
+    }
     const newListing=new Listing(req.body.listing);
     newListing.owner=req.user._id;
     newListing.image={url,filename};
