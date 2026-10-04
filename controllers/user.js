@@ -1,50 +1,45 @@
-const User=require("../model/user");
+const User = require("../model/user");
 
+module.exports.sendSignup = (req, res) => {
+    res.render("users/Signup.ejs");
+};
 
-
-
-
-module.exports.sendSignup=(req,res)=>{
-    res.render("users/Signup.ejs")
-}
-
-module.exports.reciveSignup=(async(req,res)=>{
-    try{
-     let{username,password,email}=req.body;
-    const Uservalue=new User({email,username});
-   const final= await User.register(Uservalue,password);
-   req.login(final,(err)=>{
-    if(err){
-        return next (err);
+module.exports.reciveSignup = async (req, res, next) => {
+    try {
+        const { username, password, email } = req.body;
+        const user = await User.register(new User({ email, username }), password);
+        req.login(user, (error) => {
+            if (error) return next(error);
+            req.flash("success", "Successfully signed up.");
+            res.redirect("/listings");
+        });
+    } catch (error) {
+        if (error.name === "UserExistsError") {
+            req.flash("error", "That username is already taken.");
+            return res.redirect("/user/signup");
+        }
+        next(error);
     }
-    req.flash("sucess","Suceesfully Signed Up");
-   res.redirect("/listings");
-   })
-    }
-   catch(e){
-    req.flash("error","e.message");
-    res.redirect("/user/signup");
-   }
-});
+};
 
-
-module.exports.sendLogin=(req,res)=>{
+module.exports.sendLogin = (req, res) => {
     res.render("users/login");
 };
 
-module.exports.ReciveLogin= async(req,res)=>{
-        req.flash("success","Welcome Back!");
-        let url=req.session.redirectUrl || "/listings";
-        res.redirect(url);
+module.exports.ReciveLogin = async (req, res) => {
+    req.flash("success", "Welcome back!");
+    const destination = req.session.redirectUrl;
+    delete req.session.redirectUrl;
+    const safeDestination = typeof destination === "string" && destination.startsWith("/") && !destination.startsWith("//")
+        ? destination
+        : "/listings";
+    res.redirect(safeDestination);
 };
 
-module.exports.Logout=(req,res)=>{
-    req.logout((err)=>{
-        if(err){
-            return next(err);
-        }
-        req.flash("success","You are Loged out");
+module.exports.Logout = (req, res, next) => {
+    req.logout((error) => {
+        if (error) return next(error);
+        req.flash("success", "You are logged out.");
         res.redirect("/listings");
-    }); // This is the method to logout the users:
-
+    });
 };

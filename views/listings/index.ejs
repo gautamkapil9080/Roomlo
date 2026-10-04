@@ -17,9 +17,6 @@
     margin-top:1rem;
     opacity:1;
   }
-  .tax-info{
-    display:none;
-  }
   .toggle{
     border:1px solid black;
     border-radius:1rem;
@@ -77,14 +74,15 @@
 
 
 
+    <% if(data.length === 0){ %><p>No stays are listed yet.</p><% } %>
     <div class="main-card">
    <% for(let value of data) { %>
     <div class="card" style="width: 18rem;">
-  <img src="<%=value.image.url%>" class="card-img-top" alt="...">
+  <% if(value.image && value.image.url){ %><img src="<%=value.image.url%>" class="card-img-top" alt="Photo of <%= value.title %>"><% } else { %><div class="card-img-top bg-light d-flex align-items-center justify-content-center" role="img" aria-label="No photo available">No photo available</div><% } %>
   <div class="card-body">
     <h5 class="card-title"><%= value.title%></h5>
     <p class="card-text"><%=value.description%></p>
-    <p class="card-price">INR <nbsp></nbsp><%=value.price%> <i class="tax-info">+ 3% GST</i></p>
+    <p class="card-price">INR <span class="price-value" data-base-price="<%=value.price%>"><%=value.price%></span> <span class="tax-info" hidden>(incl. 3% GST)</span></p>
     <p class="card-location"><%=value.location%> </p>
     <a href="/listings/<%=value.id%>"  class="btn btn-primary">More to know </a>
   </div>
@@ -95,12 +93,13 @@
 
 <script>
   let clicked=document.getElementById("flexSwitchCheckDefault");
-  clicked.addEventListener("click",()=>{
-     let taxInfo=document.getElementsByClassName("tax-info");
-        for(info of  taxInfo){
-          info.style.display="inline";
-        }
+  clicked.addEventListener("change",()=>{
+     document.querySelectorAll(".card-price").forEach((price)=>{
+       const amount = price.querySelector(".price-value");
+       const taxInfo = price.querySelector(".tax-info");
+       const basePrice = Number(amount.dataset.basePrice);
+       amount.textContent = clicked.checked ? (basePrice * 1.03).toFixed(2) : basePrice;
+       taxInfo.hidden = !clicked.checked;
+     });
   })
 </script>
-
-

@@ -1,23 +1,32 @@
  <%- layout("/layouts/boiler.ejs") %> 
 
-<%if (search.length==0) {%>
+<form action="/search" method="GET" class="search-sort">
+  <input type="hidden" name="searchValue" value="<%= searchValue %>">
+  <label for="sort">Sort by price</label>
+  <select id="sort" name="sort" onchange="this.form.submit()">
+    <option value="relevance" <%= sort === 'relevance' ? 'selected' : '' %>>Recommended</option>
+    <option value="price-asc" <%= sort === 'price-asc' ? 'selected' : '' %>>Price: low to high</option>
+    <option value="price-desc" <%= sort === 'price-desc' ? 'selected' : '' %>>Price: high to low</option>
+  </select>
+  <label for="priceMin">Minimum price</label>
+  <input id="priceMin" name="priceMin" type="number" min="0" value="<%= priceMin %>">
+  <label for="priceMax">Maximum price</label>
+  <input id="priceMax" name="priceMax" type="number" min="0" value="<%= priceMax %>">
+  <button type="submit">Apply</button>
+</form>
 
-<h2>Result Is Not Found</h2>
-<%} %>
+<%if (search.length==0) {%><h2>No results found for “<%= searchValue %>”.</h2><%} %>
 
 
-    <% for(value of search){%>
+    <% for(const value of search){%>
         <div class="card" style="width: 18rem;">
-  <img src="<%=value.image.url%>" class="card-img-top" alt="Image is Loading">
+  <% if(value.image && value.image.url){ %><img src="<%=value.image.url%>" class="card-img-top" alt="Photo of <%= value.title %>"><% } else { %><div class="card-img-top bg-light d-flex align-items-center justify-content-center" role="img" aria-label="No photo available">No photo available</div><% } %>
   <div class="card-body">
     <h5 class="card-title"><%= value.title%></h5>
     <p class="card-text"><%=value.description%></p>
-    <p class="card-price">INR <nbsp></nbsp><%=value.price%> <i class="tax-info">+ 3% GST</i></p>
+    <p class="card-price">INR <%=value.price%></p>
     <p class="card-location"><%=value.location%> </p>
     <a href="/listings/<%=value._id%>"  class="btn btn-primary">More to know </a>
   </div>
   </div>
    <%}%>
-
-
-

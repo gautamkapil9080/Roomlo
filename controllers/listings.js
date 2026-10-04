@@ -1,5 +1,5 @@
 const Listing=require("../model/listing");
-const {ListingSchema}=require("../schemavalidation");
+const {cloudinary}=require("../cloudConfig");
 const ExpressError=require("../utils/ExpressError");
 
 module.exports.index=async(req,res)=>{
@@ -23,15 +23,7 @@ res.render("listings/create");
 // });
 // controller
 module.exports.createRecive=(async(req,res,next)=>{
-    let url=req.file?.path;
-    if(!url){
-        throw new ExpressError(400,"Image Failed");
-    }
-    let filename=req.file?.filename;
-    const { error } = ListingSchema.validate(req.body);
-    if (error) {
-  throw new ExpressError(400, error.details.map(detail => detail.message).join(", "));
-    }
+    const { path: url, filename } = req.file;
     const newListing=new Listing(req.body.listing);
     newListing.owner=req.user._id;
     newListing.image={url,filename};
@@ -42,36 +34,48 @@ module.exports.createRecive=(async(req,res,next)=>{
 
 module.exports.Showvalue=async(req,res)=>{  // ** To show the value 
     let {id}=req.params;
-        const findValue=await Listing.findById(id).populate("reviews").populate("owner");
+        const findValue=await Listing.findById(id).populate("reviews").populate("owner").populate("reviews.author");
+        if (!findValue) throw new ExpressError(404,"Listing not found.");
         res.render("listings/showvalue",{findValue});
 };
 
 module.exports.Sendupdate=(async(req,res)=>{
     let {id}=req.params;
     const  newValue=await Listing.findById(id);
+    if (!newValue) throw new ExpressError(404,"Listing not found.");
     res.render("listings/editfrom",{newValue});
 });
 
 module.exports.ReciveUpdate=(async(req,res)=>{
     let {id}=req.params;
-    let {title,description,price,location,country}=req.body;
-    if(!req.body.listing){
-        throw new ExpressError(404,"Send Valid Data");
-        }
-    await Listing.findByIdAndUpdate(id,{
-        title:title,
-        description:description,
-        price:price,
-        location:location,
-        country:country
-    });
-    
+    const { title, description, price, location, Country } = req.body.listing;
+    const permittedChanges = { title, description, price, location, Country };
+    if (req.file) permittedChanges.image = { url: req.file.path, filename: req.file.filename };
+    const updatedListing = await Listing.findByIdAndUpdate(id, {
+        $set: permittedChanges
+    }, { runValidators: true });
+    if (!updatedListing) throw new ExpressError(404,"Listing not found.");
+    if (req.file) await deleteImage(updatedListing.image?.filename);
+    req.flash("success","Listing updated.");
+
     res.redirect("/listings");
 
 });
 
 module.exports.Delete= async(req,res)=>{
     let {id}=req.params;
-    await Listing.findByIdAndDelete(id);
+    const listing = await Listing.findByIdAndDelete(id);
+    if (!listing) throw new ExpressError(404,"Listing not found.");
+    await deleteImage(listing.image?.filename);
+    req.flash("success","Listing deleted.");
     res.redirect("/listings");
 };
+
+async function deleteImage(publicId) {
+    if (!publicId) return;
+    try {
+        await cloudinary.uploader.destroy(publicId);
+    } catch (error) {
+        console.error("Could not remove listing image from Cloudinary:", error.message);
+    }
+}

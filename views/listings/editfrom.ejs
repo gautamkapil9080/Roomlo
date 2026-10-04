@@ -1,7 +1,7 @@
 <%- layout("/layouts/boiler.ejs") %>
 
     <h3>Check it and correct the data</h3> 
-    <form method="POST" action="/listings/submmiteditdata/<%= newValue._id %>?_method=PUT" class="needs-validation" novalidate>
+    <form method="POST" action="/listings/submmiteditdata/<%= newValue._id %>?_method=PUT" class="needs-validation" novalidate enctype="multipart/form-data">
         <div class="group">
             <label for="title">Title</label>
              <input name="listing[title]" value="<%=newValue.title%>" class="form-control" required>
@@ -52,7 +52,7 @@
 
     <div class="group">
         <label for="country">Country</label>
-        <input name="listing[Country]" value="<%=newValue.country%>" class="form-control" required>
+        <input name="listing[Country]" value="<%=newValue.Country%>" class="form-control" required>
           <div class="valid-feedback">
                     Country  Look Good
                 </div>
@@ -61,7 +61,10 @@
                 </div><br>
     </div>
 
+    <div class="group">
+        <label for="image">Replace image (optional)</label>
+        <input id="image" name="listing[image]" type="file" accept="image/jpeg,image/png,image/webp" class="form-control">
+    </div>
+
         <button>Submmit it!</button>
     </form>
-
-

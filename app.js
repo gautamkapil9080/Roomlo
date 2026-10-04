@@ -1,162 +1,121 @@
+require("dotenv").config();
 
-require('dotenv').config();
-const express=require("express");
-const app=express();
-const mongoose=require('mongoose');
-const Listing=require("./model/listing");
-const path=require("path");
-// const MONGO_URL="mongodb://127.0.0.1:27017/Roomlo";
-const dbUrl=process.env.ATLASDB_URL;
-const methodOverride=require("method-override");
-const ejsmate=require("ejs-mate");
-const wrapAsync=require("./utils/wrapAsync");
-const ExpressError=require("./utils/ExpressError");
-const listings=require("./expressRouter/listings");
-const Review=require("./expressRouter/review");
-const User=require("./expressRouter/user");
-const session=require("express-session");
-// const MongoStore = require("connect-mongo");
+const express = require("express");
+const mongoose = require("mongoose");
+const path = require("path");
+const methodOverride = require("method-override");
+const ejsmate = require("ejs-mate");
+const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const flash=require('connect-flash');
-const passport=require("passport"); // For passport
-const passportLocal=require("passport-local");
-const Users=require("./model/user");
-const {currentUser}=require("./middleware/ForAuthorization");
+const flash = require("connect-flash");
+const passport = require("passport");
+const passportLocal = require("passport-local");
+const ExpressError = require("./utils/ExpressError");
+const listings = require("./expressRouter/listings");
+const reviews = require("./expressRouter/review");
+const users = require("./expressRouter/user");
+const User = require("./model/user");
+const Listing = require("./model/listing");
+const { currentUser } = require("./middleware/ForAuthorization");
+const requireConfiguration = require("./utils/configuration");
+const buildListingSearch = require("./utils/listingSearch");
+const getErrorResponse = require("./utils/errorResponse");
 
+const app = express();
+const isProduction = process.env.NODE_ENV === "production";
 
-let port=8080;
-
-// Database Connection :
-main().
-then(()=>{
-    console.log("created a db");
-})
-.catch((err)=>{
-    console.log("Not connected db");
-})
-async function main(){
-    await mongoose.connect(dbUrl);
-}
-
-// Setting Path And Requiring Statics File
-app.set("views",path.join(__dirname,"views")); // My ejs file is inside the views file have a look ! 
-app.use(express.urlencoded({extended:true}));
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+app.engine("ejs", ejsmate);
+if (isProduction) app.set("trust proxy", 1);
+app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(methodOverride("_method"));
-app.engine('ejs', ejsmate);
-app.set("view engine","ejs"); // Reminder that express need to use  ejs as template engine
-app.use(express.static(path.join(__dirname,"/public")));
+app.use(express.static(path.join(__dirname, "public")));
 
-const store = MongoStore.create({
-    mongoUrl: dbUrl,
-    collectionName:"sessions",
-    // crypto:{
-    //     secret:"mysupersecretcode",
-    // },
-    touchAfter:24*3600,
-});
-store.on("error",()=>{
-    console.log("Error in Mongo Sessions");
-});
-
-
-// Sessions Route : 
-    const sessionOptions={
-        store,
-        secret:"mysupersecretcode",
-        resave:false,
-        saveUninitialized:false,
-        cookie:{
-            expires:Date.now() + 7*24*60*60*1000,
-            maxAge:7*24*60*60*1000,
-            httpOnly:true,
-        }
-    }
-
-
-    app.use(session(sessionOptions));
-    app.use(flash());
-
-    // For Passports: 
-    app.use(passport.initialize());
-    app.use(passport.session());
-    passport.use(new passportLocal(Users.authenticate()));
-
-    passport.serializeUser(Users.serializeUser()); // Sesiion ma store garan 
-    passport.deserializeUser(Users.deserializeUser());  // Sesions bata remove garna if vayo vana 
-
-
-    // We are sending the sucess messgage to every route who need they will use :
-    app.use((req,res,next)=>{    
-        res.locals.error=req.flash("error");      
-        res.locals.success=req.flash("success");
-        res.locals.err=req.flash("err");
-        // res.locals.reqUser = req.user || null;
-        res.locals.reqUser=req.user;
-        next();
+const store = process.env.ATLASDB_URL
+    ? MongoStore.create({
+        mongoUrl: process.env.ATLASDB_URL,
+        collectionName: "sessions",
+        touchAfter: 24 * 3600
     })
+    : new session.MemoryStore();
+store.on("error", (error) => {
+    console.error("Session store error:", error.message);
+});
 
+app.use(session({
+    store,
+    secret: process.env.SESSION_SECRET || require("crypto").randomBytes(32).toString("hex"),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "lax",
+        secure: isProduction
+    }
+}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new passportLocal(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    res.locals.err = req.flash("err");
+    res.locals.reqUser = req.user;
+    next();
+});
 app.use(currentUser);
 
-// For Listing router :
-app.use("/listings",listings);
+app.use("/listings", listings);
+app.use("/review", reviews);
+app.use("/user", users);
 
-// For Review router :
-app.use("/review",Review);
-
-// For User Router ;
-app.use("/user",User);
-
-// For Search Route:
-app.get("/search",async(req,res)=>{
- let {searchValue}=req.query;
-     if(!searchValue || searchValue.trim() === ""){
-        req.flash("err","Please enter something to search");
-        return res.redirect("/listings");
-    }
-
-    let search=await Listing.find({
-        location:{
-            $regex:searchValue,  // Find Similar Matching Text :
-            $options: "i"      // Case Sensative:
-
+app.get("/search", async (req, res, next) => {
+    try {
+        const searchCriteria = buildListingSearch(req.query);
+        if (!searchCriteria) {
+            req.flash("err", "Please enter a destination or keyword to search.");
+            return res.redirect("/listings");
         }
+        let listingsQuery = Listing.find(searchCriteria.query).limit(100);
+        if (searchCriteria.sortSpec) listingsQuery = listingsQuery.sort(searchCriteria.sortSpec);
+        const search = await listingsQuery;
+        res.render("listings/search", {
+            search,
+            searchValue: searchCriteria.term,
+            sort: searchCriteria.sort,
+            priceMin: req.query.priceMin || "",
+            priceMax: req.query.priceMax || ""
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get("/", (req, res) => res.redirect("/listings"));
+app.use((req, res, next) => next(new ExpressError(404, "Page not found.")));
+app.use((error, req, res, next) => {
+    const response = getErrorResponse(error);
+    if (response.status >= 500) console.error("Request failed:", error);
+    res.status(response.status).render("listings/error", { message: response.message });
+});
+
+async function startServer() {
+    const port = requireConfiguration();
+    await mongoose.connect(process.env.ATLASDB_URL);
+    app.listen(port, () => console.log(`Roomlo listening on port ${port}`));
+}
+
+if (require.main === module) {
+    startServer().catch((error) => {
+        console.error("Roomlo startup failed:", error.message);
+        process.exitCode = 1;
     });
-    res.render("listings/search",{search});
-})
+}
 
-
-
-// If no route found then it will take response at this route ::
-    // app.all("*",(req,res,next)=>{
-    //     next(new ExpressError(404,"Page Not found "));
-    // })
-
-// Middleware for catching the error :
-
-// app.use((err,req,res,next)=>{
-//     let {statuscode=500,message}=err;
-//     // res.status(statuscode).send(message);
-//      res.render("listings/error",{message});
-// })
-app.use((err,req,res,next)=>{
-
-    console.log("FULL ERROR:");
-    console.log(err);
-
-    let {statuscode=500,message}=err;
-
-    res.render("listings/error",{message});
-
-})
-app.get("/",(req,res)=>{
-    res.redirect("/listings");
-})
-
-app.listen(port,()=>{
-    console.log("Server has been started");
-})
-
-
-
-
-
+module.exports = { app, startServer, requireConfiguration };

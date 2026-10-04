@@ -24,6 +24,10 @@ Roomlo is a full-stack hotel/room listing platform built using Node.js, Express.
 * Cloudinary
 * Bootstrap
 
+## Configuration
+
+Before starting the app, set `ATLASDB_URL`, `SESSION_SECRET`, `CLOUD_NAME`, `CLOUD_API_KEY`, and `CLOUD_API_SECRET` in the deployment environment or a local `.env` file. `PORT` is optional and defaults to `8080`. Production cookies use the secure flag, so production deployments must serve the app over HTTPS.
+
 ## Upcoming Improvements
 
 * Payment Gateway Integration
@@ -47,4 +51,3 @@ Roomlo is a full-stack hotel/room listing platform built using Node.js, Express.
 
 
 <img width="998" height="671" alt="Screenshot 2026-06-12 at 11 00 05 PM" src="https://github.com/user-attachments/assets/ecb784eb-2bda-4cc4-a9ce-7f658a4d3ac1" />
-

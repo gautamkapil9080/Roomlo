@@ -3,7 +3,6 @@ const router=express.Router();
 const User=require("../model/user");
 const WrapAsync=require("../utils/wrapAsync");
 const passport=require("passport");
-const {savedRedirectUrl}=require("../middleware/isAuthenticate");
 const userController=require("../controllers/user");
 
 // For Signup 
@@ -18,7 +17,6 @@ router.route("/signup")
 router.route("/login")
     .get(userController.sendLogin)
     .post(
-    savedRedirectUrl,
     passport.authenticate
     ("local",{
         failureRedirect:"/user/login",
@@ -28,6 +26,6 @@ router.route("/login")
 
  
 router.route("/logout")
-.get(userController.Logout);
+.post(userController.Logout);
 
 module.exports=router;
