@@ -18,7 +18,7 @@
 
      <div class="navbar-nav ms-auto">
 
-    <% if(locals.reqUser) { %>
+    <% if(locals.currUser) { %>
         <a class="nav-link" href="/listings/new">Add Your Stay</a>
         <form method="POST" action="/user/logout"><button class="nav-link btn btn-link" type="submit"><b>Log-Out</b></button></form>
     <% } else { %>
