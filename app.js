@@ -70,6 +70,7 @@ function configureApplication() {
         res.locals.success = req.flash("success");
         res.locals.err = req.flash("err");
         res.locals.reqUser = req.user;
+        res.locals.isAuthenticated = req.isAuthenticated();
         next();
     });
     app.use(currentUser);
