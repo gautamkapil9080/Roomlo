@@ -32,88 +32,97 @@ app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-const store = process.env.ATLASDB_URL
-    ? MongoStore.create({
-        mongoUrl: process.env.ATLASDB_URL,
+let applicationConfigured = false;
+
+function configureApplication() {
+    if (applicationConfigured) return;
+
+    const store = MongoStore.create({
+        client: mongoose.connection.getClient(),
         collectionName: "sessions",
         touchAfter: 24 * 3600
-    })
-    : new session.MemoryStore();
-store.on("error", (error) => {
-    console.error("Session store error:", error.message);
-});
+    });
+    store.on("error", (error) => {
+        console.error("Session store error:", error.message);
+    });
 
-app.use(session({
-    store,
-    secret: process.env.SESSION_SECRET || require("crypto").randomBytes(32).toString("hex"),
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "lax",
-        secure: isProduction
-    }
-}));
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new passportLocal(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-app.use((req, res, next) => {
-    res.locals.error = req.flash("error");
-    res.locals.success = req.flash("success");
-    res.locals.err = req.flash("err");
-    res.locals.reqUser = req.user;
-    next();
-});
-app.use(currentUser);
-
-app.use("/listings", listings);
-app.use("/review", reviews);
-app.use("/user", users);
-
-app.get("/search", async (req, res, next) => {
-    try {
-        const searchCriteria = buildListingSearch(req.query);
-        if (!searchCriteria) {
-            req.flash("err", "Please enter a destination or keyword to search.");
-            return res.redirect("/listings");
+    app.use(session({
+        store,
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: "lax",
+            secure: isProduction
         }
-        let listingsQuery = Listing.find(searchCriteria.query).limit(100);
-        if (searchCriteria.sortSpec) listingsQuery = listingsQuery.sort(searchCriteria.sortSpec);
-        const search = await listingsQuery;
-        res.render("listings/search", {
-            search,
-            searchValue: searchCriteria.term,
-            sort: searchCriteria.sort,
-            priceMin: req.query.priceMin || "",
-            priceMax: req.query.priceMax || ""
-        });
-    } catch (error) {
-        next(error);
-    }
-});
+    }));
+    app.use(flash());
+    app.use(passport.initialize());
+    app.use(passport.session());
+    passport.use(new passportLocal(User.authenticate()));
+    passport.serializeUser(User.serializeUser());
+    passport.deserializeUser(User.deserializeUser());
 
-app.get("/", (req, res) => res.redirect("/listings"));
-app.use((req, res, next) => next(new ExpressError(404, "Page not found.")));
-app.use((error, req, res, next) => {
-    const response = getErrorResponse(error);
-    if (response.status >= 500) console.error("Request failed:", error);
-    res.status(response.status).render("listings/error", { message: response.message });
-});
+    app.use((req, res, next) => {
+        res.locals.error = req.flash("error");
+        res.locals.success = req.flash("success");
+        res.locals.err = req.flash("err");
+        res.locals.reqUser = req.user;
+        next();
+    });
+    app.use(currentUser);
+    app.use("/listings", listings);
+    app.use("/review", reviews);
+    app.use("/user", users);
+
+    app.get("/search", async (req, res, next) => {
+        try {
+            const searchCriteria = buildListingSearch(req.query);
+            if (!searchCriteria) {
+                req.flash("err", "Please enter a destination or keyword to search.");
+                return res.redirect("/listings");
+            }
+            let listingsQuery = Listing.find(searchCriteria.query).limit(100);
+            if (searchCriteria.sortSpec) listingsQuery = listingsQuery.sort(searchCriteria.sortSpec);
+            const search = await listingsQuery;
+            res.render("listings/search", {
+                search,
+                searchValue: searchCriteria.term,
+                sort: searchCriteria.sort,
+                priceMin: req.query.priceMin || "",
+                priceMax: req.query.priceMax || ""
+            });
+        } catch (error) {
+            next(error);
+        }
+    });
+
+    app.get("/", (req, res) => res.redirect("/listings"));
+    app.use((req, res, next) => next(new ExpressError(404, "Page not found.")));
+    app.use((error, req, res, next) => {
+        const response = getErrorResponse(error);
+        if (response.status >= 500) console.error("Request failed:", error);
+        res.status(response.status).render("listings/error", { message: response.message });
+    });
+    applicationConfigured = true;
+}
 
 async function startServer() {
     const port = requireConfiguration();
-    await mongoose.connect(process.env.ATLASDB_URL);
+    await mongoose.connect(process.env.ATLASDB_URL, { serverSelectionTimeoutMS: 15000 });
+    configureApplication();
     app.listen(port, () => console.log(`Roomlo listening on port ${port}`));
 }
 
 if (require.main === module) {
     startServer().catch((error) => {
-        console.error("Roomlo startup failed:", error.message);
+        if (error.code === 8000 || error.codeName === "AtlasError" || error.codeName === "AuthenticationFailed") {
+            console.error("Roomlo startup failed: MongoDB authentication failed. Check the database username and password in ATLASDB_URL, and URL-encode any special characters.");
+        } else {
+            console.error("Roomlo startup failed:", error.message);
+        }
         process.exitCode = 1;
     });
 }
