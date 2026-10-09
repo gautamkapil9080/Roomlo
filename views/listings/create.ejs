@@ -1,6 +1,7 @@
 <%- layout("/layouts/boiler.ejs") %>
-<body>
-    <h3>Detail Descriptions:</h3>
+<div class="form-card">
+    <p class="eyebrow">Share a space</p><h3>Add a new stay</h3>
+    <p class="muted mb-4">Add the details guests need to find and enjoy your place.</p>
     <form method="POST" action="/listings/add"  novalidate class="needs-validation" enctype="multipart/form-data" >
         <div class="offset-2">
         <div class="group">
@@ -80,5 +81,5 @@
     </form>
 
 
-</div>
+</div></div>
 <script src="/js/script.js"></script>

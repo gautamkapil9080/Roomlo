@@ -1,5 +1,6 @@
  <%- layout("/layouts/boiler.ejs") %> 
 
+<div class="page-header"><div><p class="eyebrow">Search results</p><h1>Stays for “<%= searchValue %>”</h1></div></div>
 <form action="/search" method="GET" class="search-sort">
   <input type="hidden" name="searchValue" value="<%= searchValue %>">
   <label for="sort">Sort by price</label>
@@ -15,18 +16,19 @@
   <button type="submit">Apply</button>
 </form>
 
-<%if (search.length==0) {%><h2>No results found for “<%= searchValue %>”.</h2><%} %>
+<%if (search.length==0) {%><div class="alert alert-light border">No results found for “<%= searchValue %>”. Try another destination or adjust your filters.</div><%} %>
 
-
+<div class="search-results">
     <% for(const value of search){%>
-        <div class="card" style="width: 18rem;">
+        <div class="card">
   <% if(value.image && value.image.url){ %><img src="<%=value.image.url%>" class="card-img-top" alt="Photo of <%= value.title %>"><% } else { %><div class="card-img-top bg-light d-flex align-items-center justify-content-center" role="img" aria-label="No photo available">No photo available</div><% } %>
   <div class="card-body">
     <h5 class="card-title"><%= value.title%></h5>
     <p class="card-text"><%=value.description%></p>
     <p class="card-price">INR <%=value.price%></p>
-    <p class="card-location"><%=value.location%> </p>
-    <a href="/listings/<%=value._id%>"  class="btn btn-primary">More to know </a>
+    <p class="card-location"><i class="fa-solid fa-location-dot me-1"></i><%=value.location%> </p>
+    <a href="/listings/<%=value._id%>"  class="btn btn-primary">View stay <i class="fa-solid fa-arrow-right ms-1"></i></a>
   </div>
   </div>
    <%}%>
+</div>

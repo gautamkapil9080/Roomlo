@@ -1,6 +1,6 @@
 <%- layout("/layouts/boiler.ejs") %>
 
-    <h3>Check it and correct the data</h3> 
+    <div class="form-card"><p class="eyebrow">Manage your stay</p><h3>Update listing details</h3><p class="muted mb-4">Keep your listing accurate and welcoming.</p>
     <form method="POST" action="/listings/submmiteditdata/<%= newValue._id %>?_method=PUT" class="needs-validation" novalidate enctype="multipart/form-data">
         <div class="group">
             <label for="title">Title</label>
@@ -67,4 +67,4 @@
     </div>
 
         <button>Submmit it!</button>
-    </form>
+    </form></div>

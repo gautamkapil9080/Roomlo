@@ -1,6 +1,6 @@
 <%- layout("/layouts/boiler.ejs") %>
-<body>
-    <h3> Write Review for-<%=value%></h1> <br> <br>
+<div class="form-card">
+    <p class="eyebrow">Share your experience</p><h3>Review <%=value%></h3>
         <form method="POST" action="/review/listings/<%=id%>/reviews"  novalidate class="needs-validation" >
         <div class="offset-2">
         <div class="group">
@@ -20,7 +20,6 @@
 
         <button class=" btn btn-dark">Submmit it!</button>
     </form>
-</div>
 </div>
 
 <script src="/js/review.js"></script>
